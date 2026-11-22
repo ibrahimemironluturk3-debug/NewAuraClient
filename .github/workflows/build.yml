@@ -1,0 +1,34 @@
+name: Build NewAuraClient
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.14'
+
+      - name: Extract project
+        run: unzip NewAuraClient-source.zip -d project
+
+      - name: Build JAR
+        run: |
+          cd project/NewAuraClient
+          gradle build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NewAuraClient-JAR
+          path: project/NewAuraClient/build/libs/*.jar
